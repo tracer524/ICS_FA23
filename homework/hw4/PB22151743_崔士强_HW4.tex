@@ -48,7 +48,7 @@
 
 \title{ICS Homework 4}
 \author{崔士强 PB22151743}
-\date{\today}
+\date{November 10, 2023}
 
 \bibliographystyle{plain}
 
@@ -82,13 +82,52 @@
 0101 100 010 000 100
 \section{} % T5
 Addressing modes: immediate, register, PC-relative, indirect, Base+offset.
-\begin{tabular}[H]
+\begin{table}[H]
   \centering
-  \begin{table}{ccc}
+  \begin{tabular}{ccc}
     \hline\hline
     Category & Instructions & Addressing modes \\
-  \end{table}
-\end{tabular}
+    \hline
+    \multirow{3}{*}{Operate} & ADD & register, immediate \\
+                             & NOT & register \\
+                             & LEA & register, PC-relative \\
+    \hline
+    Data movement & LDR & register, Base+offset \\
+    \hline
+    Control & JMP & register \\
+    \hline\hline
+  \end{tabular}
+\end{table}
+\section{} % T6
+\begin{enumerate}
+  \item AND 
+  \item AND R3, R3, \#0
+  \item NOT R1, R7
+
+        ADD R1, R1, \#1
+
+        ADD R1, R1, R6
+  \item 
+  \item ADD R1, R1, \#0
+\end{enumerate} 
+
+\section{} % T7
+JMP: 2 accesses (One for the instruction and another for the address stored in BaseR)
+
+ADD: 3 accesses (One for the instruction and two for the operands)
+
+LDI: 3 accesses (One access to fetch the LDI instruction itself.
+Another access to fetch the address from memory.
+A third access to fetch the actual data from the location specified by the address.)
+\section{} % T8
+\begin{enumerate}
+  \item x70A4
+  \item Suppose the instruction is at memory address x3010
+  
+        1110 1100 0011 1101
+\end{enumerate}
+\section{} % T9
+In all 16 bits of the value in R5, there are 4 bits which are 1.
 \end{document}
 \iffalse
 \begin{figure}[h]
