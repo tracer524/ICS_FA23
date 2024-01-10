@@ -1,0 +1,131 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[a4paper,left=3cm,right=3cm,top=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\usepackage[colorlinks,linkcolor=blue]{hyperref}
+\renewcommand{\figurename}{Figure}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstdefinelanguage{LC3}{
+  morekeywords={ADD, AND, BR, BRn, BRnz, BRnzp, BRnp, BRz, BRzp, BRp, JMP, JSR, LD, LDI, LDR, LEA, NOT, ST, STI, STR},
+  sensitive=false,
+  morecomment=[l]{;},
+  morestring=[b]",
+  morekeywords=[2]{R0, R1, R2, R3, R4, R5, R6, R7}, % Define register keywords
+}
+\lstset{frame=tb,
+  language=LC3,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,%设置行号位置none不显示行号
+  numberstyle=\tiny\courier, %设置行号大小
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  keywordstyle=[2]\color{purple},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  escapeinside=`,%逃逸字符(1左面的键)，用于显示中文例如在代码中`中文...`
+  tabsize=4,
+  extendedchars=false %解决代码跨页时，章节标题，页眉等汉字不显示的问题
+}
+
+\setlength\lineskiplimit{5.25bp}
+\setlength\lineskip{5.25bp}
+
+\title{Lab06 Report}
+\author{崔士强 PB22151743}
+\date{December 31, 2023}
+
+\begin{document}
+
+\maketitle
+\section{Purpose}
+The purpose of the program is to compute the factorial of a non-negative number $N$, 
+
+Anticipated outcomes: The program starts with repeatedly printing the student ID, waiting for the input.
+For differnt kinds of input, the output varies. 
+First the program tells whether the input is a decimal digit. If yes, the output is as follows:
+\begin{enumerate}
+  \item $0 \leq N \leq 7$ : $N!$ is displayed.
+  \item $8 \leq N \leq 9$ : print: “$N!$ is too large for LC-3.”
+\end{enumerate}
+
+\section{Principles}
+\subsection{Calling ISR}
+In the OS code, bit 14 of the KBSR is set to 1. When input is detected, bit 15 of the KBSR is set to 1,
+enabling the interrupt signal. Then the interrupt service routine is called.
+\subsection{Getting literal value of input}
+When we use \lstinline{GETC} to get the input character, the ASCII value is stored in \lstinline{R0}.
+We also need its original value.
+
+During checking the range of input, the instructions below are performed:
+\begin{lstlisting}
+  LD      R1, ASCII_0
+  ADD     R1, R0, R1
+  BRn     NON_DEC         ; Smaller than '0'
+\end{lstlisting}
+Here \lstinline{ASCII_0} is \lstinline{#-48}. After the \lstinline{ADD} instruction, 
+the value in R1 is the literal value of the input. So we store it in another register for possible future use.
+\subsection{Giving the results}
+In this program, a trivial approach is used to give the final result: list all possibilities:
+\begin{lstlisting}
+            ADD     R3, R3, #-1
+            BRn     RES0
+            ADD     R3, R3, #-1
+            BRn     RES1
+            ; RES2 through RES7 are similar and not displayed here
+RES0        LEA     R0, MSG_RES0
+            PUTS
+            BRnzp   RETURN
+RES1        LEA     R0, MSG_RES1
+            PUTS
+            BRnzp   RETURN
+\end{lstlisting}
+
+\section{Procedure}
+\subsection{Bugs encountered}
+When testing the program, I saw "Access violation" in the console. After debugging, I found 
+out that the bug was caused by inappropriate instruction to print strings. To print strings
+using PUTS, the starting address of the string must be loaded into \lstinline{R0}. Example:
+\begin{lstlisting}
+  LEA     R0, MSG_EXCD
+  PUTS
+  MSG_EXCD    .STRINGZ    "! is too large for LC-3."
+\end{lstlisting}
+But I mistakenly used \lstinline{LD}.
+
+Solution: use \lstinline{LEA} instead.
+
+\subsection{Chanllenges}
+A major challenge in the task is to print the result.
+
+Reason for its difficulty is that the result may be more than 1 digit. For a number
+like this, we can not directly convert it to ASCII value. Possible procedures to print the result
+are as follows:
+\begin{enumerate}
+  \item Divide the result by $10$
+  \item Obtain the remainder and substract this remainder from the result
+  \item Save the remainder
+  \item Repeat step 1 if the result is positive
+  \item Print the remainders in reverse order
+\end{enumerate}
+Due to limited time, this approach, though more like “computing”, is not adopted.
+
+\section{Results}
+Screen recording: \href{https://rec.ustc.edu.cn/share/8b6ad340-a749-11ee-a899-95416037a7ff}{Lab06 Program Test} 
+
+\end{document}

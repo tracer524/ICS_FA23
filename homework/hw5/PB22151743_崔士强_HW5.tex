@@ -1,0 +1,143 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[a4paper,left=3cm,right=3cm,top=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\ctexset{
+  section={
+    format=\raggedright\zihao{3},
+    name={A,}
+  },
+  subsection={
+    format={\zihao{4}},
+    number={\arabic{subsection}}
+  }
+}
+\renewcommand{\figurename}{Figure}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstdefinelanguage{LC3}{
+  morekeywords={ADD, AND, BR, BRn, BRnz, BRnzp, BRnp, BRz, BRzp, BRp, JMP, JSR, LD, LDI, LDR, LEA, NOT, ST, STI, STR, PUSH, FILL, BLKW, STRINGZ, TRAP, RET},
+  sensitive=false,
+  morecomment=[l]{;},
+  morestring=[b]",
+  morekeywords=[2]{R0, R1, R2, R3, R4, R5, R6, R7}, % Define register keywords
+}
+\lstset{frame=tb,
+  language=LC3,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,%设置行号位置none不显示行号
+  numberstyle=\tiny\courier, %设置行号大小
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{mauve},
+  keywordstyle=[2]\color{purple},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  escapeinside=`,%逃逸字符(1左面的键)，用于显示中文例如在代码中`中文...`
+  tabsize=4,
+  extendedchars=false %解决代码跨页时，章节标题，页眉等汉字不显示的问题
+}
+
+\setlength\lineskiplimit{5.25bp}
+\setlength\lineskip{5.25bp}
+
+\title{ICS Homework 5}
+\author{崔士强 PB22151743}
+\date{December 3, 2023}
+
+\bibliographystyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\section{}  %T1
+\lstinline{.END} pseudo-op is a sign to indicate that assembly process 
+ends here. It is not an instruction. \lstinline{HALT} is an instruction
+which is actually performed.
+
+\section{}  %T2
+A data structure following the FIFO rule, which means that if an element A
+gets in the queue before B, A also gets out of the queue before B.
+
+\section{}  %T3
+\lstinline{LD} and \lstinline{ST} instructions expect memory locations, 
+not immediate values as the second operand.
+
+Fix: use \lstinline{LDI} and \lstinline{STI} instead.
+
+\section{}  %T4
+There is a problem: the linker won't recognize that the \lstinline{AGAIN} label in one module is intended to refer to the same entity as the \lstinline{AGAIN} label in the other module.
+\section{}  %T5
+\begin{enumerate}
+  \item x0FFF
+  \item No. Data in R2 will be saved in memory location x3004.
+  \item Data in R2(i.e. x0FFF) will be performed as an operation, which is \lstinline{BRnzp #-1}. 
+  Therefore the program will repeatedly perform this operation.
+\end{enumerate}
+
+\section{}  %T6
+\lstinline{.FILL} initializes a memory location as its operand. 
+
+\lstinline{.BLKW} sets aside $N$ memory locations, where $N$ is the operand.
+
+\lstinline{.STRINGZ} initializes $N+1$ memory locations with a string and NULL, where $N$ is the length of the string.
+\section{}  %T7
+a: \lstinline{NOT R2, R0}
+
+b: \lstinline{ADD R2, R2, #1}
+
+c: \lstinline{BRz DONE}
+
+d: \lstinline{ADD R0, R0, #1}
+\section{}  %T8
+
+\section{}  %T9
+\begin{enumerate}
+  \item AH
+  \item After \lstinline{PUSH F} or \lstinline{PUSH G}
+  \item Nothing
+\end{enumerate}
+
+\section{}  %T10
+\begin{lstlisting}
+PEEK:
+  LD    R1, TOP_OF_STACK      ; Load the top of the stack address into R1
+  ADD   R2, R1, #0            ; Copy the address to R2 for underflow checking
+  
+  BRzp  NO_UNDERFLOW          ; Branch if the stack is not empty
+  
+  LEA   R0, UNDERFLOW_MSG     ; Load the address of the underflow error message
+  TRAP  x22                   ; Output the error message
+  TRAP  x25                   ; Halt
+  
+NO_UNDERFLOW:
+  LDR   R0, R1, #0            ; Load the value at the top of the stack into R0
+  RET
+
+TOP_OF_STACK:     .FILL x3FFF
+UNDERFLOW_MSG:    .STRINGZ "Stack underflow error"
+\end{lstlisting}
+
+\end{document}
+\iffalse
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{name.png}
+    \caption{name}
+\end{figure}
+\fi

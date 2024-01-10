@@ -1,0 +1,29 @@
+.ORIG x3000
+;数字准备
+ADD R1, R1, #1   ;F(0)放入R1
+ADD R0, R0, #1   ;F(1)放入R0
+LDI R5, QNUMBER  ;加载数字q
+NOT R6, R5
+ADD R6, R6, #1   ;-q
+LDI R4, PNUMBER  ;加载数字p
+ADD R4, R4, #-1  ;p-1
+LDI R7, NNUMBER  ;加载数字N
+ADD R7, R7, #-1  ;N-1
+;计算过程
+AGAIN AND R3, R1, R4    ;F(0)%p
+ADD R2, R0, #0
+ADD R2, R2, R6
+BRzp #-2
+ADD R2, R2, R5    ;F(1)%q
+ADD R1, R0, #0    ;F(1)迁移到R1
+ADD R0, R2, R3    ;F(2)
+STI R0, RESULT    ;保存结果至x3103
+ADD R7, R7, #-1
+BRnp AGAIN
+TRAP x25
+
+PNUMBER .FILL x3100
+QNUMBER .FILL x3101
+NNUMBER .FILL x3102
+RESULT  .FILL x3103
+.END

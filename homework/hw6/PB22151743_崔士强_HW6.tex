@@ -1,0 +1,152 @@
+\documentclass[UTF8]{ctexart}
+\usepackage[a4paper,left=3cm,right=3cm,top=2cm]{geometry}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{threeparttable}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amssymb}
+\ctexset{
+  section={
+    format=\raggedright\zihao{3},
+    name={A,}
+  },
+  subsection={
+    format={\zihao{4}},
+    number={\arabic{subsection}}
+  }
+}
+\renewcommand{\figurename}{Figure}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstdefinelanguage{LC3}{
+  morekeywords={ADD, AND, BR, BRn, BRnz, BRnzp, BRnp, BRz, BRzp, BRp, JMP, JSR, LD, LDI, LDR, LEA, NOT, ST, STI, STR, PUSH, FILL, BLKW, STRINGZ, TRAP, RET},
+  sensitive=false,
+  morecomment=[l]{;},
+  morestring=[b]",
+  morekeywords=[2]{R0, R1, R2, R3, R4, R5, R6, R7}, % Define register keywords
+}
+\lstset{frame=tb,
+  language=LC3,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left,%设置行号位置none不显示行号
+  numberstyle=\tiny\courier, %设置行号大小
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{mauve},
+  keywordstyle=[2]\color{purple},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  escapeinside=`,%逃逸字符(1左面的键)，用于显示中文例如在代码中`中文...`
+  tabsize=4,
+  extendedchars=false %解决代码跨页时，章节标题，页眉等汉字不显示的问题
+}
+
+\setlength\lineskiplimit{5.25bp}
+\setlength\lineskip{5.25bp}
+
+\title{ICS Homework 6}
+\author{崔士强 PB22151743}
+\date{December 23, 2023}
+
+\bibliographystyle{plain}
+
+\begin{document}
+
+\maketitle
+
+\section{}  %T1
+\begin{enumerate}
+  \item 65 times.
+  \item $x0BFB + \sum_{i=x0001}^{x0041} i$
+\end{enumerate}
+
+\section{}  %T2
+\begin{enumerate}
+  \item Using RET would result in the program returning to whatever address is in R7, which might not be the correct return address from the interrupt.
+  \item If RET is used instead of RTI, PSR is not correctly restored.
+\end{enumerate}
+
+\section{}  %T3
+\begin{enumerate}
+  \item The character whose ASCII value is x0049(i.e. I).
+  \item No. Value in R7 is lost after the instruction \lstinline{JSR B}, which means subroutine A cannot return as expected.
+\end{enumerate}
+
+\section{}  %T4
+X is ACV(Access Control Violation) exception.
+
+X is set to 1 when the value stored in MAR is greater than xFE00 or less than x3000 and PSR[15] $= 1$.
+
+\section{}  %T5
+\begin{enumerate}
+  \item Read KBSR. If the first bit of KBSR is 0(i.e. value in KBSR is not negative), there is a new character input from the keyboard.
+  \item The character is stored in KBDR. So read the KBDR.
+  \item Keep checking the DSR until the value is not negative, then store the character in DDR.
+  \item \ 
+  
+\begin{lstlisting}
+START   LDI     R1, KBSR    ; Test for character input
+        BRzp    START
+        LDI     R0, KBDR
+ECHO    LDI     R1, DSR     ; Test for display
+        BRzp    ECHO
+        STI     R0, DDR
+        BRnzp   CONTINUE
+KBSR    .FILL   xFE00       ; Address of KBSR
+KBDR    .FILL   xFE02       ; Address of KBDR
+DSR     .FILL   xFE04       ; Address of DSR
+DDR     .FILL   xFE06       ; Address of DDR
+\end{lstlisting}
+\end{enumerate}
+
+\section{}  %T6
+\begin{enumerate}
+  \item
+\begin{lstlisting}
+  BRzp    WAIT
+  BRzp    LETTER
+  BR      CONTINUE
+  BRp     GETCHAR
+  C1      .FILL     #-65
+  C2      .FILL     #17
+\end{lstlisting}
+  \item Left shift \lstinline{R0} by 4 bits.
+  \item No. The content of \lstinline{R0} has already been wiped out.
+\end{enumerate}
+\section{}  %T7
+\begin{enumerate}
+  \item \lstinline{H3ll0_W0r1d}
+  \item 34.
+\end{enumerate}
+
+\section{}  %T8
+\begin{enumerate}
+  \item A character may be read more than once.
+  \item 
+  \item The first one. It's almost certain that the user cannot strike the keyboard in sync with the processor.
+\end{enumerate}
+
+\section{}  %T9
+\lstinline{F !}
+
+\section{}  %T10
+
+\end{document}
+\iffalse
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.5]{name.png}
+    \caption{name}
+\end{figure}
+\fi
